@@ -76,3 +76,11 @@ Dataset disesuaikan untuk kebutuhan prediksi waktu belajar.
 - Rekomendasi semakin personal seiring waktu
 - Tidak ada pelatihan ulang per pengguna
 - Sistem sederhana, adaptif, dan mudah dikembangkan
+
+9. Cara menjalankan
+
+- git clone https://github.com/PandaJack69/ALP_AI.git
+- npm install
+- npm run dev
+- php artisan serve
+
