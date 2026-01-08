@@ -93,7 +93,7 @@
                             @endforeach
                         </div>
 
-                        <div class="bg-gray-800 rounded-3xl border border-gray-700 shadow-2xl overflow-hidden">
+                        {{-- <div class="bg-gray-800 rounded-3xl border border-gray-700 shadow-2xl overflow-hidden">
                             <div class="p-6 border-b border-gray-700 flex justify-between items-center">
                                 <h3 class="font-bold text-lg">Prediksi Produktivitas 24 Jam</h3>
                                 <span class="px-3 py-1 bg-green-900/50 text-green-400 text-xs rounded-full font-bold">Live AI Engine</span>
@@ -124,6 +124,73 @@
                                                         <span class="text-green-500 font-black tracking-tighter uppercase px-2 py-1 bg-green-500/10 rounded">Bisa Belajar</span>
                                                     @else
                                                         <span class="text-red-400 font-black tracking-tighter uppercase px-2 py-1 bg-red-500/10 rounded">Sibuk Kuliah</span>
+                                                    @endif
+                                                </td>
+                                            </tr>
+                                        @endforeach
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div> --}}
+                        <div class="bg-gray-800 rounded-3xl border border-gray-700 shadow-2xl overflow-hidden">
+                            <div class="p-6 border-b border-gray-700 flex justify-between items-center">
+                                <div>
+                                    <h3 class="font-bold text-lg">Prediksi Produktivitas 24 Jam</h3>
+                                    <p class="text-xs text-gray-500">Berikan feedback pada jam yang sudah lewat untuk melatih AI personalmu.</p>
+                                </div>
+                                <span class="px-3 py-1 bg-green-900/50 text-green-400 text-xs rounded-full font-bold">Hybrid AI Active</span>
+                            </div>
+                            <div class="max-h-96 overflow-y-auto custom-scrollbar">
+                                <table class="w-full text-left">
+                                    <thead class="bg-gray-900 sticky top-0">
+                                        <tr>
+                                            <th class="p-4 text-xs font-bold text-gray-500 uppercase tracking-widest">Jam</th>
+                                            <th class="p-4 text-xs font-bold text-gray-500 uppercase tracking-widest">Skor AI</th>
+                                            <th class="p-4 text-xs font-bold text-gray-500 uppercase tracking-widest text-center">Feedback</th>
+                                            <th class="p-4 text-xs font-bold text-gray-500 uppercase tracking-widest text-right">Status</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody class="divide-y divide-gray-700">
+                                        @foreach($recommendations['schedule'] as $item)
+                                            <tr class="hover:bg-gray-700/50 transition duration-150">
+                                                <td class="p-4 font-mono font-bold text-indigo-300">{{ $item['formatted_time'] }}</td>
+                                                <td class="p-4">
+                                                    <div class="flex items-center space-x-3">
+                                                        <div class="flex-1 h-2 bg-gray-900 rounded-full overflow-hidden">
+                                                            <div class="h-full bg-indigo-500 rounded-full shadow-[0_0_10px_rgba(99,102,241,0.5)]" style="width: {{ $item['score'] * 100 }}%"></div>
+                                                        </div>
+                                                        <span class="text-xs font-bold text-gray-400 w-8">{{ round($item['score'] * 100) }}%</span>
+                                                    </div>
+                                                </td>
+                                                
+                                                <td class="p-4">
+                                                    <form action="{{ route('feedback.store') }}" method="POST" class="flex items-center justify-center space-x-2">
+                                                        @csrf
+                                                        <input type="hidden" name="ai_score" value="{{ $item['score'] }}">
+                                                        <input type="hidden" name="hour" value="{{ $item['hour'] }}">
+                                                        
+                                                        <select name="rating" class="text-[10px] bg-gray-900 border-gray-700 rounded text-gray-300 py-1 px-2 focus:ring-indigo-500">
+                                                            <option value="5">🔥 High</option>
+                                                            <option value="3" selected>Neutral</option>
+                                                            <option value="1">😴 Low</option>
+                                                        </select>
+
+                                                        <select name="focus_status" class="text-[10px] bg-gray-900 border-gray-700 rounded text-gray-300 py-1 px-2 focus:ring-indigo-500">
+                                                            <option value="focused">Focused</option>
+                                                            <option value="distracted">Distracted</option>
+                                                        </select>
+
+                                                        <button type="submit" class="p-1.5 bg-indigo-600 rounded hover:bg-indigo-500 transition shadow-lg shadow-indigo-500/20">
+                                                            <svg class="w-3 h-3 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path></svg>
+                                                        </button>
+                                                    </form>
+                                                </td>
+
+                                                <td class="p-4 text-right text-xs">
+                                                    @if($item['status'] == 'Available')
+                                                        <span class="text-green-500 font-black tracking-tighter uppercase px-2 py-1 bg-green-500/10 rounded border border-green-500/20">Bisa Belajar</span>
+                                                    @else
+                                                        <span class="text-red-400 font-black tracking-tighter uppercase px-2 py-1 bg-red-500/10 rounded border border-red-500/20">Sibuk Kuliah</span>
                                                     @endif
                                                 </td>
                                             </tr>
