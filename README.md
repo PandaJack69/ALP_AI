@@ -3,7 +3,7 @@ MyStudy – Smart Study Time Recommender
 1. Gambaran Proyek
 
 MyStudy adalah aplikasi berbasis web yang menggunakan AI untuk membantu mahasiswa menentukan waktu belajar paling efektif berdasarkan data tidur dan jadwal kuliah. Sistem ini memprediksi tingkat produktivitas setiap jam dan memberikan rekomendasi waktu belajar yang optimal secara personal dan adaptif.
-Proyek ini mendukung SDG 4 – Quality Education
+Proyek ini mendukung SDG - 4: Quality Education
 
 2. Anggota Kelompok
 
@@ -24,7 +24,7 @@ MyStudy AI hadir untuk memberikan rekomendasi waktu belajar yang berbasis data d
 4. Pendekatan AI
    
 Jenis Prediksi: Regresi
-Output: skor produktivitas 0.0 – 1.0 untuk setiap jam
+Output: skor produktivitas 0.0 - 1.0 untuk setiap jam
 Model yang Digunakan: Random Forest Regressor
 
 Model dilatih satu kali dan disimpan sebagai file .pkl
