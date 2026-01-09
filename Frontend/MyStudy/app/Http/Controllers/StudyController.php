@@ -122,7 +122,7 @@ class StudyController extends Controller
             $output = trim($output);
             Log::info("Python output received, length: " . strlen($output));
             
-            // SIMPLE DIRECT JSON PARSE - should work now
+            // SIMPLE DIRECT JSON PARSE
             $recommendations = json_decode($output, true);
             
             if (json_last_error() !== JSON_ERROR_NONE) {
@@ -190,9 +190,59 @@ class StudyController extends Controller
         return implode("\n", $jsonLines);
     }
 
+    public function storeSleep(Request $request)
+    {
+        /** @var \App\Models\User $user */
+        $user = Auth::user();
+        
+        $validated = $request->validate([
+            'sleep_at' => 'required|date',
+            'wake_at' => 'required|date|after:sleep_at',
+            'quality_rating' => 'nullable|integer|min:1|max:5'
+        ]);
+        
+        $user->sleepLogs()->create($validated);
+        
+        return back()->with('success', 'Log tidur berhasil disimpan!');
+    }
+
+    public function storeSchedule(Request $request)
+    {
+        /** @var \App\Models\User $user */
+        $user = Auth::user();
+
+        $validated = $request->validate([
+            'subject_name' => 'required|string|max:255',
+            'day_of_week' => 'required|string',
+            'start_time' => 'required|date_format:H:i',
+            'end_time' => 'required|date_format:H:i|after:start_time'
+        ]);
+
+        $user->classSchedules()->create($validated);
+        
+        return back()->with('success', 'Jadwal kuliah berhasil disimpan!');
+    }
+
+    public function history()
+    {
+        /** @var \App\Models\User $user */
+        $user = Auth::user();
+        $logs = $user->sleepLogs()->latest()->get();
+        return view('history', compact('logs'));
+    }
+
+    public function schedules()
+    {
+        /** @var \App\Models\User $user */
+        $user = Auth::user();
+        $schedules = $user->classSchedules()->orderBy('day_of_week')->get();
+        return view('schedules', compact('schedules'));
+    }
+
     /**
      * Extract JSON from Python output
      */
+    /*
     private function extractJsonFromOutput($output)
     {
         // Remove the debug line if present
@@ -300,71 +350,25 @@ class StudyController extends Controller
         
         return null;
     }
+    */
 
     /**
      * Helper function to fix common JSON issues
      */
-    private function fixJson($jsonStr)
-    {
-        // Fix 1: Remove extra spaces after { and before property names
-        $jsonStr = preg_replace('/\{\s*"/', '{"', $jsonStr);
-        $jsonStr = preg_replace('/,\s*"/', ',"', $jsonStr);
+    // private function fixJson($jsonStr)
+    // {
+    //     // Fix 1: Remove extra spaces after { and before property names
+    //     $jsonStr = preg_replace('/\{\s*"/', '{"', $jsonStr);
+    //     $jsonStr = preg_replace('/,\s*"/', ',"', $jsonStr);
         
-        // Fix 2: Ensure property names have quotes
-        $jsonStr = preg_replace('/(\w+)\s*:/', '"$1":', $jsonStr);
+    //     // Fix 2: Ensure property names have quotes
+    //     $jsonStr = preg_replace('/(\w+)\s*:/', '"$1":', $jsonStr);
         
-        // Fix 3: Remove control characters
-        $jsonStr = preg_replace('/[[:cntrl:]]/', '', $jsonStr);
+    //     // Fix 3: Remove control characters
+    //     $jsonStr = preg_replace('/[[:cntrl:]]/', '', $jsonStr);
         
-        return $jsonStr;
-    }
+    //     return $jsonStr;
+    // }
 
-    public function storeSleep(Request $request)
-    {
-        /** @var \App\Models\User $user */
-        $user = Auth::user();
-        
-        $validated = $request->validate([
-            'sleep_at' => 'required|date',
-            'wake_at' => 'required|date|after:sleep_at',
-            'quality_rating' => 'nullable|integer|min:1|max:5'
-        ]);
-        
-        $user->sleepLogs()->create($validated);
-        
-        return back()->with('success', 'Log tidur berhasil disimpan!');
-    }
-
-    public function storeSchedule(Request $request)
-    {
-        /** @var \App\Models\User $user */
-        $user = Auth::user();
-
-        $validated = $request->validate([
-            'subject_name' => 'required|string|max:255',
-            'day_of_week' => 'required|string',
-            'start_time' => 'required|date_format:H:i',
-            'end_time' => 'required|date_format:H:i|after:start_time'
-        ]);
-
-        $user->classSchedules()->create($validated);
-        
-        return back()->with('success', 'Jadwal kuliah berhasil disimpan!');
-    }
-
-    public function history()
-    {
-        /** @var \App\Models\User $user */
-        $user = Auth::user();
-        $logs = $user->sleepLogs()->latest()->get();
-        return view('history', compact('logs'));
-    }
-
-    public function schedules()
-    {
-        /** @var \App\Models\User $user */
-        $user = Auth::user();
-        $schedules = $user->classSchedules()->orderBy('day_of_week')->get();
-        return view('schedules', compact('schedules'));
-    }
+    
 }

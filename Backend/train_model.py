@@ -6,8 +6,7 @@ import joblib
 import os
 
 def train():
-    # 1. Load Dataset Kaggle
-    # Pastikan nama file sesuai dengan yang kamu download
+    # Load Dataset Kaggle
     base_path = os.path.dirname(__file__)
     csv_path = os.path.join(base_path, 'data/Sleep_health_and_lifestyle_dataset.csv')
     
